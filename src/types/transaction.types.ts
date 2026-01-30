@@ -3,12 +3,19 @@ export enum TransactionType {
   SELL = 'SELL',
 }
 
+export enum GoldUnit {
+  CHI = 'CHI',
+  LUONG = 'LUONG',
+  OZ = 'OZ',
+}
+
 export interface Transaction {
   id: string;
   userId: string;
   idempotencyKey: string;
   type: TransactionType;
   quantity: number;
+  unit: GoldUnit;
   pricePerUnit: number;
   currency: string;
   totalAmount: number;
@@ -24,6 +31,7 @@ export interface CreateTransactionRequest {
   idempotencyKey: string;
   type: TransactionType;
   quantity: number;
+  unit?: GoldUnit;
   pricePerUnit: number;
   currency?: string;
   provider?: string;

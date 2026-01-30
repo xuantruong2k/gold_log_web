@@ -1,6 +1,6 @@
 import type { User, LoginResponse, Transaction } from '@/types';
 import type { ApiUser, ApiLoginResponse, ApiTransaction } from './types';
-import { UserRole, TransactionType } from '@/types';
+import { UserRole, TransactionType, GoldUnit } from '@/types';
 
 export function apiUserToUser(apiUser: ApiUser): User {
   return {
@@ -29,6 +29,7 @@ export function apiTransactionToTransaction(apiTransaction: ApiTransaction): Tra
     idempotencyKey: apiTransaction.idempotency_key,
     type: apiTransaction.type as TransactionType,
     quantity: apiTransaction.quantity,
+    unit: apiTransaction.unit as GoldUnit,
     pricePerUnit: apiTransaction.price_per_unit,
     currency: apiTransaction.currency,
     totalAmount: apiTransaction.total_amount,
@@ -48,6 +49,7 @@ export function transactionToApiRequest(
     idempotency_key: request.idempotencyKey,
     type: request.type,
     quantity: request.quantity,
+    unit: request.unit,
     price_per_unit: request.pricePerUnit,
     currency: request.currency,
     provider: request.provider,

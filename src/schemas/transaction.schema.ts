@@ -12,6 +12,7 @@ export const transactionSchema = z.object({
     })
     .positive('Quantity must be greater than 0')
     .max(1e10, 'Quantity is too large'),
+  unit: z.enum(['CHI', 'LUONG', 'OZ']).default('CHI'),
   pricePerUnit: z
     .number({
       required_error: 'Price per unit is required',

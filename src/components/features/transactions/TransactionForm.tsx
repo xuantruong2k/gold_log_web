@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { transactionSchema, type TransactionFormData } from '@/schemas/transaction.schema';
 import { useCreateTransaction } from '@/hooks/useTransactions';
-import { TransactionType } from '@/types';
+import { TransactionType, GoldUnit } from '@/types';
 
 interface TransactionFormProps {
   onSuccess?: () => void;
@@ -22,6 +22,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onSuccess, onC
     resolver: zodResolver(transactionSchema),
     defaultValues: {
       type: TransactionType.BUY,
+      unit: GoldUnit.CHI,
       currency: 'VND',
       transactionDate: new Date().toISOString().slice(0, 16),
     },
@@ -79,7 +80,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onSuccess, onC
       {/* Quantity */}
       <div>
         <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">
-          Quantity (chỉ) *
+          Quantity *
         </label>
         <input
           id="quantity"
@@ -90,6 +91,23 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onSuccess, onC
           placeholder="10.5"
         />
         {errors.quantity && <p className="mt-1 text-sm text-red-600">{errors.quantity.message}</p>}
+      </div>
+
+      {/* Unit */}
+      <div>
+        <label htmlFor="unit" className="block text-sm font-medium text-gray-700">
+          Unit
+        </label>
+        <select
+          id="unit"
+          {...register('unit')}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+        >
+          <option value={GoldUnit.CHI}>Chỉ (CHI) - ~3.75g</option>
+          <option value={GoldUnit.LUONG}>Lượng (LUONG) - ~37.5g</option>
+          <option value={GoldUnit.OZ}>Troy Ounce (OZ) - ~31.1g</option>
+        </select>
+        {errors.unit && <p className="mt-1 text-sm text-red-600">{errors.unit.message}</p>}
       </div>
 
       {/* Price per Unit */}

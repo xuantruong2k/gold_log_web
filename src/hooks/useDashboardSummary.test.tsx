@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useDashboardSummary } from './useDashboardSummary';
 import { useTransactions } from './useTransactions';
-import { TransactionType } from '@/types/transaction.types';
+import { TransactionType, GoldUnit } from '@/types/transaction.types';
 import type { Transaction } from '@/types/transaction.types';
 import { vi } from 'vitest';
 
@@ -27,6 +27,7 @@ const mockTransaction = (overrides: Partial<Transaction>): Transaction => ({
   idempotencyKey: 'key1',
   type: TransactionType.BUY,
   quantity: 10,
+  unit: GoldUnit.CHI,
   pricePerUnit: 75000000,
   currency: 'VND',
   totalAmount: 750000000,

@@ -21,6 +21,7 @@ export interface ApiTransaction {
   idempotency_key: string;
   type: 'BUY' | 'SELL';
   quantity: number;
+  unit: 'CHI' | 'LUONG' | 'OZ';
   price_per_unit: number;
   currency: string;
   total_amount: number;
@@ -36,6 +37,7 @@ export interface ApiCreateTransactionRequest {
   idempotency_key: string;
   type: 'BUY' | 'SELL';
   quantity: number;
+  unit?: 'CHI' | 'LUONG' | 'OZ';
   price_per_unit: number;
   currency?: string;
   provider?: string;

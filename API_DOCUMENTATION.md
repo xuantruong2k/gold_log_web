@@ -2,7 +2,7 @@
 
 **Version**: 1.0.0
 **Base URL**: `http://localhost:8080/api/v1` (configurable)
-**Last Updated**: January 30, 2026
+**Last Updated**: January 31, 2026
 
 ---
 
@@ -32,6 +32,7 @@ Gold Log is a backend service for tracking gold trading transactions with real-t
 - **Idempotency Protection**: Prevent duplicate transactions using UUID v4 keys
 - **Pagination**: Efficient pagination for transaction listings
 - **Multi-currency Support**: VND (default) and USD currencies
+- **Multi-unit Support**: CHI (default), LUONG, and OZ units for gold measurement
 
 ### API Conventions
 
@@ -56,12 +57,10 @@ GET /auth/oauth/{provider}/url?redirectUri={redirectUri}
 ```
 
 **Parameters**:
-
 - `provider` (path): OAuth provider (`google`)
 - `redirectUri` (query): Your frontend callback URL
 
 **Response**:
-
 ```json
 {
   "authorization_url": "https://accounts.google.com/o/oauth2/v2/auth?...",
@@ -76,7 +75,6 @@ POST /auth/oauth/{provider}/callback
 ```
 
 **Request Body**:
-
 ```json
 {
   "code": "authorization-code-from-provider",
@@ -85,7 +83,6 @@ POST /auth/oauth/{provider}/callback
 ```
 
 **Response**:
-
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -126,14 +123,14 @@ All errors follow a consistent format:
 
 ### Common Error Codes
 
-| Status Code | Error Code              | Description                                  |
-| ----------- | ----------------------- | -------------------------------------------- |
-| 400         | `VALIDATION_ERROR`      | Request validation failed                    |
-| 401         | `UNAUTHORIZED`          | Missing or invalid authentication token      |
-| 404         | `NOT_FOUND`             | Requested resource not found                 |
-| 409         | `DUPLICATE_TRANSACTION` | Transaction with same idempotency key exists |
-| 429         | `RATE_LIMIT_EXCEEDED`   | Too many requests                            |
-| 500         | `INTERNAL_SERVER_ERROR` | Unexpected server error                      |
+| Status Code | Error Code | Description |
+|------------|------------|-------------|
+| 400 | `VALIDATION_ERROR` | Request validation failed |
+| 401 | `UNAUTHORIZED` | Missing or invalid authentication token |
+| 404 | `NOT_FOUND` | Requested resource not found |
+| 409 | `DUPLICATE_TRANSACTION` | Transaction with same idempotency key exists |
+| 429 | `RATE_LIMIT_EXCEEDED` | Too many requests |
+| 500 | `INTERNAL_SERVER_ERROR` | Unexpected server error |
 
 ### Example Error Response
 
@@ -155,7 +152,6 @@ OAuth endpoints are rate-limited to prevent abuse:
 - **OAuth Callback**: 10 requests per minute per IP
 
 Response headers include rate limit information:
-
 ```http
 X-RateLimit-Limit: 10
 X-RateLimit-Remaining: 7
@@ -176,7 +172,6 @@ Check service health status.
 **Rate Limit**: None
 
 **Response**: `200 OK`
-
 ```json
 {
   "status": "UP",
@@ -187,7 +182,6 @@ Check service health status.
 ```
 
 **Example**:
-
 ```bash
 curl http://localhost:8080/api/v1/health
 ```
@@ -204,15 +198,12 @@ Get OAuth authorization URL to redirect user for authentication.
 **Rate Limit**: 10 requests/minute
 
 **Path Parameters**:
-
 - `provider` (required): OAuth provider (`google`)
 
 **Query Parameters**:
-
 - `redirectUri` (required): Your frontend callback URL where OAuth provider redirects after auth
 
 **Response**: `200 OK`
-
 ```json
 {
   "authorization_url": "https://accounts.google.com/o/oauth2/v2/auth?client_id=...",
@@ -221,7 +212,6 @@ Get OAuth authorization URL to redirect user for authentication.
 ```
 
 **Example**:
-
 ```bash
 curl "http://localhost:8080/api/v1/auth/oauth/google/url?redirectUri=http://localhost:3000/auth/callback/google"
 ```
@@ -236,11 +226,9 @@ Exchange OAuth authorization code for JWT access token.
 **Rate Limit**: 10 requests/minute
 
 **Path Parameters**:
-
 - `provider` (required): OAuth provider (`google`)
 
 **Request Body**:
-
 ```json
 {
   "code": "4/0AfJohXk...",
@@ -249,7 +237,6 @@ Exchange OAuth authorization code for JWT access token.
 ```
 
 **Response**: `200 OK`
-
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -267,18 +254,15 @@ Exchange OAuth authorization code for JWT access token.
 ```
 
 **Validation Rules**:
-
 - `code`: Required, non-blank string
 - `state`: Required, non-blank string
 
 **Errors**:
-
 - `400`: Invalid provider or missing/invalid request fields
 - `401`: Invalid authorization code or state token
 - `500`: OAuth provider error
 
 **Example**:
-
 ```bash
 curl -X POST http://localhost:8080/api/v1/auth/oauth/google/callback \
   -H "Content-Type: application/json" \
@@ -298,7 +282,6 @@ Get current authenticated user information.
 **Rate Limit**: None
 
 **Response**: `200 OK`
-
 ```json
 {
   "id": "65b3f2a1c4e5d6f7a8b9c0d1",
@@ -311,11 +294,9 @@ Get current authenticated user information.
 ```
 
 **Errors**:
-
 - `401`: Missing or invalid authentication token
 
 **Example**:
-
 ```bash
 curl http://localhost:8080/api/v1/auth/me \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -333,11 +314,9 @@ Logout and invalidate current JWT token.
 **Response**: `204 No Content`
 
 **Errors**:
-
 - `401`: Missing or invalid authentication token
 
 **Example**:
-
 ```bash
 curl -X POST http://localhost:8080/api/v1/auth/logout \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -355,12 +334,12 @@ Create a new gold transaction (buy or sell).
 **Rate Limit**: None
 
 **Request Body**:
-
 ```json
 {
   "idempotency_key": "550e8400-e29b-41d4-a716-446655440000",
   "type": "BUY",
   "quantity": 10.5,
+  "unit": "CHI",
   "price_per_unit": 75000000,
   "currency": "VND",
   "provider": "SJC",
@@ -371,19 +350,19 @@ Create a new gold transaction (buy or sell).
 
 **Field Specifications**:
 
-| Field              | Type     | Required | Validation                      | Description                             |
-| ------------------ | -------- | -------- | ------------------------------- | --------------------------------------- |
-| `idempotency_key`  | string   | Yes      | UUID v4 format                  | Unique identifier to prevent duplicates |
-| `type`             | string   | Yes      | `BUY` or `SELL`                 | Transaction type                        |
-| `quantity`         | decimal  | Yes      | > 0, max 10 digits + 6 decimals | Gold quantity (in chỉ or grams)         |
-| `price_per_unit`   | decimal  | Yes      | > 0, max 15 digits + 2 decimals | Price per unit                          |
-| `currency`         | string   | No       | ISO 4217 code                   | Currency code (default: `VND`)          |
-| `provider`         | string   | No       | Max 100 chars                   | Gold provider name                      |
-| `transaction_date` | datetime | No       | ISO 8601 format                 | Transaction date (default: now)         |
-| `notes`            | string   | No       | Max 500 chars                   | Additional notes                        |
+| Field | Type | Required | Validation | Description |
+|-------|------|----------|------------|-------------|
+| `idempotency_key` | string | Yes | UUID v4 format | Unique identifier to prevent duplicates |
+| `type` | string | Yes | `BUY` or `SELL` | Transaction type |
+| `quantity` | decimal | Yes | > 0, max 10 digits + 6 decimals | Gold quantity |
+| `unit` | string | No | `CHI`, `LUONG`, or `OZ` | Unit of measurement (default: `CHI`) |
+| `price_per_unit` | decimal | Yes | > 0, max 15 digits + 2 decimals | Price per unit |
+| `currency` | string | No | ISO 4217 code | Currency code (default: `VND`) |
+| `provider` | string | No | Max 100 chars | Gold provider name |
+| `transaction_date` | datetime | No | ISO 8601 format | Transaction date (default: now) |
+| `notes` | string | No | Max 500 chars | Additional notes |
 
 **Response**: `201 Created`
-
 ```json
 {
   "id": "65b3f2a1c4e5d6f7a8b9c0d1",
@@ -391,6 +370,7 @@ Create a new gold transaction (buy or sell).
   "idempotency_key": "550e8400-e29b-41d4-a716-446655440000",
   "type": "BUY",
   "quantity": 10.5,
+  "unit": "CHI",
   "price_per_unit": 75000000,
   "currency": "VND",
   "total_amount": 787500000,
@@ -404,28 +384,25 @@ Create a new gold transaction (buy or sell).
 ```
 
 **Validation Rules**:
-
 - `idempotency_key`: Must be valid UUID v4 (e.g., `550e8400-e29b-41d4-a716-446655440000`)
 - `type`: Must be exactly `BUY` or `SELL` (case-sensitive)
 - `quantity`: Must be positive, max 10 integer digits and 6 decimal places
+- `unit`: If provided, must be `CHI`, `LUONG`, or `OZ` (defaults to `CHI`)
 - `price_per_unit`: Must be positive, max 15 integer digits and 2 decimal places
 - `currency`: If provided, must be valid ISO 4217 code
 - `transaction_date`: If provided, must be valid ISO 8601 datetime
 
 **Errors**:
-
 - `400`: Validation error (invalid UUID, negative quantity, etc.)
 - `401`: Missing or invalid authentication token
 - `409`: Transaction with same `idempotency_key` already exists
 
 **Idempotency Behavior**:
-
 - Same `idempotency_key` within 60 seconds returns `409 Conflict`
 - After 60 seconds, same key can be reused for new transaction
 - Each transaction attempt should use a fresh UUID v4
 
 **Example**:
-
 ```bash
 curl -X POST http://localhost:8080/api/v1/transactions \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
@@ -434,6 +411,7 @@ curl -X POST http://localhost:8080/api/v1/transactions \
     "idempotency_key": "550e8400-e29b-41d4-a716-446655440000",
     "type": "BUY",
     "quantity": 10.5,
+    "unit": "CHI",
     "price_per_unit": 75000000,
     "currency": "VND",
     "provider": "SJC",
@@ -452,11 +430,9 @@ Get a specific transaction by ID.
 **Rate Limit**: None
 
 **Path Parameters**:
-
 - `id` (required): Transaction ID (MongoDB ObjectId - 24-character hex string)
 
 **Response**: `200 OK`
-
 ```json
 {
   "id": "65b3f2a1c4e5d6f7a8b9c0d1",
@@ -464,6 +440,7 @@ Get a specific transaction by ID.
   "idempotency_key": "550e8400-e29b-41d4-a716-446655440000",
   "type": "BUY",
   "quantity": 10.5,
+  "unit": "CHI",
   "price_per_unit": 75000000,
   "currency": "VND",
   "total_amount": 787500000,
@@ -477,13 +454,11 @@ Get a specific transaction by ID.
 ```
 
 **Errors**:
-
 - `400`: Invalid transaction ID format
 - `401`: Missing or invalid authentication token
 - `404`: Transaction not found or belongs to another user
 
 **Example**:
-
 ```bash
 curl http://localhost:8080/api/v1/transactions/65b3f2a1c4e5d6f7a8b9c0d1 \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -500,22 +475,20 @@ Get all transactions with optional filters and pagination.
 
 **Query Parameters**:
 
-| Parameter   | Type     | Required | Default | Description                     |
-| ----------- | -------- | -------- | ------- | ------------------------------- |
-| `page`      | integer  | No       | 1       | Page number (1-indexed)         |
-| `pageSize`  | integer  | No       | 20      | Items per page (max: 100)       |
-| `type`      | string   | No       | -       | Filter by type: `BUY` or `SELL` |
-| `startDate` | datetime | No       | -       | Filter by start date (ISO 8601) |
-| `endDate`   | datetime | No       | -       | Filter by end date (ISO 8601)   |
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| `page` | integer | No | 1 | Page number (1-indexed) |
+| `pageSize` | integer | No | 20 | Items per page (max: 100) |
+| `type` | string | No | - | Filter by type: `BUY` or `SELL` |
+| `startDate` | datetime | No | - | Filter by start date (ISO 8601) |
+| `endDate` | datetime | No | - | Filter by end date (ISO 8601) |
 
 **Notes**:
-
 - `startDate` and `endDate` must be used together
 - `type` filter is mutually exclusive with date range filter
 - Date range filter returns transactions where `transaction_date` is between `startDate` and `endDate`
 
 **Response**: `200 OK`
-
 ```json
 {
   "data": [
@@ -550,28 +523,24 @@ Get all transactions with optional filters and pagination.
 **Examples**:
 
 Get all transactions (first page):
-
 ```bash
 curl http://localhost:8080/api/v1/transactions \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
 Filter by transaction type:
-
 ```bash
 curl "http://localhost:8080/api/v1/transactions?type=BUY&page=1&pageSize=10" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
 Filter by date range:
-
 ```bash
 curl "http://localhost:8080/api/v1/transactions?startDate=2026-01-01T00:00:00&endDate=2026-01-31T23:59:59" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
 **Errors**:
-
 - `400`: Invalid query parameters (invalid date format, invalid type)
 - `401`: Missing or invalid authentication token
 
@@ -585,19 +554,16 @@ Soft delete a transaction (marks as deleted without removing from database).
 **Rate Limit**: None
 
 **Path Parameters**:
-
 - `id` (required): Transaction ID (MongoDB ObjectId)
 
 **Response**: `204 No Content`
 
 **Errors**:
-
 - `400`: Invalid transaction ID format
 - `401`: Missing or invalid authentication token
 - `404`: Transaction not found or belongs to another user
 
 **Example**:
-
 ```bash
 curl -X DELETE http://localhost:8080/api/v1/transactions/65b3f2a1c4e5d6f7a8b9c0d1 \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -613,20 +579,21 @@ Represents a gold buy or sell transaction.
 
 ```json
 {
-  "id": "string", // MongoDB ObjectId (24-char hex)
-  "user_id": "string", // User who owns this transaction
-  "idempotency_key": "string", // UUID v4 for duplicate prevention
-  "type": "BUY|SELL", // Transaction type enum
-  "quantity": "decimal", // Gold quantity (max 10.6 digits)
-  "price_per_unit": "decimal", // Price per unit (max 15.2 digits)
-  "currency": "string", // ISO 4217 currency code (default: VND)
-  "total_amount": "decimal", // Calculated: quantity × price_per_unit
-  "provider": "string", // Provider name (e.g., SJC, PNJ)
-  "transaction_date": "datetime", // ISO 8601 format
-  "notes": "string", // Optional notes (max 500 chars)
-  "is_deleted": "boolean", // Soft delete flag
-  "created_at": "datetime", // Record creation timestamp (ISO 8601)
-  "updated_at": "datetime" // Last update timestamp (ISO 8601)
+  "id": "string",                    // MongoDB ObjectId (24-char hex)
+  "user_id": "string",               // User who owns this transaction
+  "idempotency_key": "string",       // UUID v4 for duplicate prevention
+  "type": "BUY|SELL",                // Transaction type enum
+  "quantity": "decimal",             // Gold quantity (max 10.6 digits)
+  "unit": "CHI|LUONG|OZ",            // Unit of measurement (default: CHI)
+  "price_per_unit": "decimal",       // Price per unit (max 15.2 digits)
+  "currency": "string",              // ISO 4217 currency code (default: VND)
+  "total_amount": "decimal",         // Calculated: quantity × price_per_unit
+  "provider": "string",              // Provider name (e.g., SJC, PNJ)
+  "transaction_date": "datetime",    // ISO 8601 format
+  "notes": "string",                 // Optional notes (max 500 chars)
+  "is_deleted": "boolean",           // Soft delete flag
+  "created_at": "datetime",          // Record creation timestamp (ISO 8601)
+  "updated_at": "datetime"           // Last update timestamp (ISO 8601)
 }
 ```
 
@@ -636,12 +603,12 @@ User account information.
 
 ```json
 {
-  "id": "string", // User ID
-  "email": "string", // User email (unique)
-  "username": "string", // Display name
-  "profile_picture_url": "string", // Avatar URL from OAuth provider
-  "provider": "string", // OAuth provider (google, github)
-  "role": "string" // User role (USER, ADMIN)
+  "id": "string",                    // User ID
+  "email": "string",                 // User email (unique)
+  "username": "string",              // Display name
+  "profile_picture_url": "string",   // Avatar URL from OAuth provider
+  "provider": "string",              // OAuth provider (google, github)
+  "role": "string"                   // User role (USER, ADMIN)
 }
 ```
 
@@ -651,12 +618,12 @@ Pagination information for list endpoints.
 
 ```json
 {
-  "current_page": 1, // Current page number (1-indexed)
-  "page_size": 20, // Items per page
-  "total_items": 45, // Total number of items across all pages
-  "total_pages": 3, // Total number of pages
-  "has_next": true, // Whether there's a next page
-  "has_previous": false // Whether there's a previous page
+  "current_page": 1,        // Current page number (1-indexed)
+  "page_size": 20,          // Items per page
+  "total_items": 45,        // Total number of items across all pages
+  "total_pages": 3,         // Total number of pages
+  "has_next": true,         // Whether there's a next page
+  "has_previous": false     // Whether there's a previous page
 }
 ```
 
@@ -666,11 +633,35 @@ Standard error response format.
 
 ```json
 {
-  "error": "string", // Error code (e.g., VALIDATION_ERROR)
-  "message": "string", // Human-readable error message
-  "timestamp": "string" // ISO 8601 timestamp
+  "error": "string",        // Error code (e.g., VALIDATION_ERROR)
+  "message": "string",      // Human-readable error message
+  "timestamp": "string"     // ISO 8601 timestamp
 }
 ```
+
+### Unit Enum
+
+Gold measurement units supported by the system.
+
+| Unit | Display Name | Description | Weight | Common Pairing |
+|------|-------------|-------------|---------|----------------|
+| `CHI` | Chỉ | Vietnamese unit (most common) | ~3.75g per chỉ | VND currency |
+| `LUONG` | Lượng | Vietnamese unit | ~37.5g (10 chỉ = 1 lượng) | VND currency |
+| `OZ` | Oz | Troy ounce (international) | ~31.1g | USD currency |
+
+**Default**: If `unit` is not specified in transaction creation, defaults to `CHI`.
+
+**Unit-Currency Pairing Guidelines**:
+- **CHI** ↔ **VND**: Vietnamese chỉ with Vietnamese Dong
+- **LUONG** ↔ **VND**: Vietnamese lượng with Vietnamese Dong
+- **OZ** ↔ **USD**: Troy ounce with US Dollar
+
+> **Note**: The system allows unusual pairings (e.g., CHI with USD) but logs a warning. All pairings are accepted to support edge cases.
+
+**Conversion Reference**:
+- 1 lượng = 10 chỉ ≈ 37.5 grams
+- 1 chỉ ≈ 3.75 grams
+- 1 troy oz ≈ 31.1 grams
 
 ---
 
@@ -751,6 +742,7 @@ import { v4 as uuidv4 } from 'uuid';
 interface CreateTransactionParams {
   type: 'BUY' | 'SELL';
   quantity: number;
+  unit?: 'CHI' | 'LUONG' | 'OZ';
   pricePerUnit: number;
   currency?: string;
   provider?: string;
@@ -764,6 +756,7 @@ async function createTransaction(params: CreateTransactionParams) {
       idempotency_key: uuidv4(), // Generate fresh UUID for each request
       type: params.type,
       quantity: params.quantity,
+      unit: params.unit || 'CHI',
       price_per_unit: params.pricePerUnit,
       currency: params.currency || 'VND',
       provider: params.provider,
@@ -784,6 +777,7 @@ async function createTransaction(params: CreateTransactionParams) {
 const newTransaction = await createTransaction({
   type: 'BUY',
   quantity: 10.5,
+  unit: 'CHI',
   pricePerUnit: 75000000,
   provider: 'SJC',
   notes: 'Purchase from SJC District 1',
@@ -1087,7 +1081,7 @@ Always generate a fresh UUID v4 for each transaction attempt:
 // ✅ Good: Fresh UUID for each request
 const transaction1 = await createTransaction({
   idempotency_key: uuidv4(),
-  ...data,
+  ...data
 });
 
 // ❌ Bad: Reusing same UUID
@@ -1127,7 +1121,9 @@ Store and refresh JWT tokens properly:
 ```typescript
 // Store token after login
 localStorage.setItem('auth_token', loginResponse.token);
-localStorage.setItem('token_expires_at', Date.now() + loginResponse.expires_in * 1000);
+localStorage.setItem('token_expires_at',
+  Date.now() + loginResponse.expires_in * 1000
+);
 
 // Check expiration before API calls
 function isTokenExpired(): boolean {
@@ -1179,7 +1175,6 @@ async function getAllTransactions() {
 ## Support
 
 For questions or issues:
-
 - **GitHub**: [github.com/yourorg/gold-log](https://github.com/yourorg/gold-log)
 - **Email**: support@goldlog.example.com
 - **Documentation**: [docs.goldlog.example.com](https://docs.goldlog.example.com)
@@ -1189,7 +1184,6 @@ For questions or issues:
 ## Changelog
 
 ### Version 1.0.0 (2026-01-30)
-
 - Initial API release
 - OAuth 2.0 authentication (Google)
 - Transaction CRUD operations

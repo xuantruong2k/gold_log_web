@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { exportToCSV, exportToJSON, downloadFile } from './exportUtils';
-import { TransactionType } from '@/types/transaction.types';
+import { TransactionType, GoldUnit } from '@/types/transaction.types';
 import type { Transaction } from '@/types/transaction.types';
 
 const mockTransaction = (overrides: Partial<Transaction> = {}): Transaction => ({
@@ -9,6 +9,7 @@ const mockTransaction = (overrides: Partial<Transaction> = {}): Transaction => (
   idempotencyKey: '550e8400-e29b-41d4-a716-446655440000',
   type: TransactionType.BUY,
   quantity: 10.5,
+  unit: GoldUnit.CHI,
   pricePerUnit: 75000000,
   currency: 'VND',
   totalAmount: 787500000,
@@ -29,7 +30,7 @@ describe('exportToCSV', () => {
     const lines = csv.split('\n');
     const headers = lines[0];
 
-    expect(headers).toBe('Date,Type,Quantity,Price Per Unit,Currency,Total Amount,Provider,Notes');
+    expect(headers).toBe('Date,Type,Quantity,Unit,Price Per Unit,Currency,Total Amount,Provider,Notes');
   });
 
   it('should format transaction data correctly', () => {
@@ -158,7 +159,7 @@ describe('exportToCSV', () => {
 
     // Should still have header
     expect(lines).toHaveLength(1);
-    expect(lines[0]).toBe('Date,Type,Quantity,Price Per Unit,Currency,Total Amount,Provider,Notes');
+    expect(lines[0]).toBe('Date,Type,Quantity,Unit,Price Per Unit,Currency,Total Amount,Provider,Notes');
   });
 
   it('should format dates in readable format', () => {
