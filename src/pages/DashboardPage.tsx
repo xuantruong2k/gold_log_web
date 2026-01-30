@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom';
 import { ROUTES } from '@/config/routes';
-import { useAuthStore } from '@/stores/authStore';
 import { useDashboardSummary } from '@/hooks/useDashboardSummary';
 
 export const DashboardPage = () => {
-  const user = useAuthStore((state) => state.user);
   const { summary, isLoading } = useDashboardSummary();
 
   const formatCurrency = (amount: number) => {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useTransactions } from '@/hooks/useTransactions';
 
 interface ProviderFilterProps {
@@ -7,16 +7,13 @@ interface ProviderFilterProps {
 }
 
 export const ProviderFilter: React.FC<ProviderFilterProps> = ({ value, onChange }) => {
-  const [providers, setProviders] = useState<string[]>([]);
   const { data } = useTransactions(undefined, { page: 1, pageSize: 1000 });
 
-  useEffect(() => {
-    if (data?.data) {
-      const uniqueProviders = Array.from(
-        new Set(data.data.map((tx) => tx.provider).filter((p): p is string => !!p))
-      ).sort();
-      setProviders(uniqueProviders);
-    }
+  const providers = useMemo(() => {
+    if (!data?.data) return [];
+    return Array.from(
+      new Set(data.data.map((tx) => tx.provider).filter((p): p is string => !!p))
+    ).sort();
   }, [data]);
 
   return (

@@ -20,14 +20,14 @@ export const TransactionsPage = () => {
   });
 
   const { filters } = useFilters();
-  const { page, pageSize, nextPage, prevPage, resetPage } = usePagination();
+  const { page, pageSize, nextPage, prevPage } = usePagination();
   const { data, isLoading } = useTransactions(filters, { page, pageSize });
-  const { mutate: deleteTransaction, isLoading: isDeleting } = useDeleteTransaction();
+  const { mutate: deleteTransaction, isPending: isDeleting } = useDeleteTransaction();
 
   // Apply client-side sorting to fetched data
   const sortedData = useMemo(() => {
     return data?.data ? sortTransactions(data.data, sortConfig) : [];
-  }, [data?.data, sortConfig]);
+  }, [data, sortConfig]);
 
   const handleDelete = (id: string) => {
     if (

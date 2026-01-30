@@ -7,7 +7,7 @@ import {
   queryStringToFilters,
 } from './filterUtils';
 import { TransactionType } from '@/types/transaction.types';
-import type { TransactionFilters, DatePreset } from '@/types/filter.types';
+import type { TransactionFilters } from '@/types/filter.types';
 
 describe('filterUtils', () => {
   describe('getDateRangeFromPreset', () => {

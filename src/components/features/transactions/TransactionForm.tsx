@@ -10,7 +10,7 @@ interface TransactionFormProps {
 }
 
 export const TransactionForm: React.FC<TransactionFormProps> = ({ onSuccess, onCancel }) => {
-  const { mutate: createTransaction, isLoading } = useCreateTransaction();
+  const { mutate: createTransaction, isPending: isLoading } = useCreateTransaction();
 
   const {
     register,

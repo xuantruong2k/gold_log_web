@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { transactionApi } from '@/api/transaction.api';
 import type {
-  Transaction,
   CreateTransactionRequest,
   TransactionFilters,
   PaginationParams,
@@ -26,7 +25,7 @@ export function useTransactions(
   return useQuery({
     queryKey: QUERY_KEYS.transactions(filters, pagination),
     queryFn: () => transactionApi.getTransactions(filters, pagination),
-    keepPreviousData: true, // Keep showing old data while fetching new page
+    placeholderData: (previousData) => previousData, // Keep showing old data while fetching new page
     staleTime: 30 * 1000, // Consider data fresh for 30 seconds
   });
 }

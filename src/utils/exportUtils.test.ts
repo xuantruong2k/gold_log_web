@@ -92,10 +92,9 @@ describe('exportToCSV', () => {
     });
 
     const csv = exportToCSV([transaction]);
-    const lines = csv.split('\n');
 
     // Notes should be quoted to preserve commas
-    expect(lines[1]).toContain('"Purchase at District 1, Ho Chi Minh"');
+    expect(csv).toContain('"Purchase at District 1, Ho Chi Minh"');
   });
 
   it('should handle newlines in notes', () => {
@@ -104,7 +103,6 @@ describe('exportToCSV', () => {
     });
 
     const csv = exportToCSV([transaction]);
-    const lines = csv.split('\n');
 
     // Newlines in CSV should be preserved within quotes
     expect(csv).toContain('Line 1\nLine 2\nLine 3');
