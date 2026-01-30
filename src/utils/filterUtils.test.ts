@@ -18,30 +18,30 @@ describe('filterUtils', () => {
 
     it('should return today range', () => {
       const result = getDateRangeFromPreset('today');
-      
+
       expect(result.startDate).toBeDefined();
       expect(result.endDate).toBeDefined();
-      
+
       const start = new Date(result.startDate!);
       const end = new Date(result.endDate!);
-      
+
       // Start should be beginning of today
       expect(start.getDate()).toBe(31);
       expect(start.getMonth()).toBe(0); // January
-      
+
       // End should be 24 hours later
       expect(end.getTime() - start.getTime()).toBe(24 * 60 * 60 * 1000);
     });
 
     it('should return week range (last 7 days)', () => {
       const result = getDateRangeFromPreset('week');
-      
+
       expect(result.startDate).toBeDefined();
       expect(result.endDate).toBeDefined();
-      
+
       const start = new Date(result.startDate!);
       const end = new Date(result.endDate!);
-      
+
       // Should be 7 days difference
       const daysDiff = Math.floor((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000));
       expect(daysDiff).toBe(7);
@@ -49,12 +49,12 @@ describe('filterUtils', () => {
 
     it('should return month range (last 30 days)', () => {
       const result = getDateRangeFromPreset('month');
-      
+
       expect(result.startDate).toBeDefined();
       expect(result.endDate).toBeDefined();
-      
+
       const start = new Date(result.startDate!);
-      
+
       // Start should be one month ago
       expect(start.getMonth()).toBe(11); // December (prev month)
       expect(start.getFullYear()).toBe(2025);
@@ -62,12 +62,12 @@ describe('filterUtils', () => {
 
     it('should return quarter range (last 3 months)', () => {
       const result = getDateRangeFromPreset('quarter');
-      
+
       expect(result.startDate).toBeDefined();
       expect(result.endDate).toBeDefined();
-      
+
       const start = new Date(result.startDate!);
-      
+
       // Start should be 3 months ago
       expect(start.getMonth()).toBe(9); // October (3 months back)
       expect(start.getFullYear()).toBe(2025);
@@ -75,26 +75,26 @@ describe('filterUtils', () => {
 
     it('should return year range (last 12 months)', () => {
       const result = getDateRangeFromPreset('year');
-      
+
       expect(result.startDate).toBeDefined();
       expect(result.endDate).toBeDefined();
-      
+
       const start = new Date(result.startDate!);
-      
+
       // Start should be one year ago
       expect(start.getFullYear()).toBe(2025);
     });
 
     it('should return empty object for "all" preset', () => {
       const result = getDateRangeFromPreset('all');
-      
+
       expect(result.startDate).toBeUndefined();
       expect(result.endDate).toBeUndefined();
     });
 
     it('should return empty object for "custom" preset', () => {
       const result = getDateRangeFromPreset('custom');
-      
+
       expect(result.startDate).toBeUndefined();
       expect(result.endDate).toBeUndefined();
     });

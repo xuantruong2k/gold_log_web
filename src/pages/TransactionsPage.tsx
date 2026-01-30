@@ -30,7 +30,9 @@ export const TransactionsPage = () => {
   }, [data?.data, sortConfig]);
 
   const handleDelete = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this transaction? This cannot be undone.')) {
+    if (
+      window.confirm('Are you sure you want to delete this transaction? This cannot be undone.')
+    ) {
       deleteTransaction(id, {
         onSuccess: () => {
           setSelectedTransactionId(null);

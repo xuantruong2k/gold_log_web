@@ -59,9 +59,7 @@ export const TransactionDetails: React.FC<TransactionDetailsProps> = ({
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-500">Quantity</label>
-          <p className="mt-1 text-sm text-gray-900">
-            {transaction.quantity.toFixed(2)} chỉ
-          </p>
+          <p className="mt-1 text-sm text-gray-900">{transaction.quantity.toFixed(2)} chỉ</p>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-500">Price per Unit</label>
@@ -81,9 +79,7 @@ export const TransactionDetails: React.FC<TransactionDetailsProps> = ({
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-500">Transaction Date</label>
-          <p className="mt-1 text-sm text-gray-900">
-            {formatDate(transaction.transactionDate)}
-          </p>
+          <p className="mt-1 text-sm text-gray-900">{formatDate(transaction.transactionDate)}</p>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-500">Currency</label>
@@ -101,12 +97,10 @@ export const TransactionDetails: React.FC<TransactionDetailsProps> = ({
       <div className="border-t pt-4">
         <div className="grid grid-cols-2 gap-4 text-xs text-gray-500">
           <div>
-            <span className="font-medium">Created:</span>{' '}
-            {formatDate(transaction.createdAt)}
+            <span className="font-medium">Created:</span> {formatDate(transaction.createdAt)}
           </div>
           <div>
-            <span className="font-medium">Updated:</span>{' '}
-            {formatDate(transaction.updatedAt)}
+            <span className="font-medium">Updated:</span> {formatDate(transaction.updatedAt)}
           </div>
         </div>
       </div>

@@ -29,9 +29,7 @@ describe('exportToCSV', () => {
     const lines = csv.split('\n');
     const headers = lines[0];
 
-    expect(headers).toBe(
-      'Date,Type,Quantity,Price Per Unit,Currency,Total Amount,Provider,Notes'
-    );
+    expect(headers).toBe('Date,Type,Quantity,Price Per Unit,Currency,Total Amount,Provider,Notes');
   });
 
   it('should format transaction data correctly', () => {
@@ -162,9 +160,7 @@ describe('exportToCSV', () => {
 
     // Should still have header
     expect(lines).toHaveLength(1);
-    expect(lines[0]).toBe(
-      'Date,Type,Quantity,Price Per Unit,Currency,Total Amount,Provider,Notes'
-    );
+    expect(lines[0]).toBe('Date,Type,Quantity,Price Per Unit,Currency,Total Amount,Provider,Notes');
   });
 
   it('should format dates in readable format', () => {

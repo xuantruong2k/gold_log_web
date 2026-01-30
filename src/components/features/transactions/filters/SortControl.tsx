@@ -18,9 +18,7 @@ export const SortControl: React.FC<SortControlProps> = ({ value, onChange }) => 
       <label className="text-sm font-medium text-gray-700">Sort by:</label>
       <select
         value={value.field}
-        onChange={(e) =>
-          onChange({ ...value, field: e.target.value as SortConfig['field'] })
-        }
+        onChange={(e) => onChange({ ...value, field: e.target.value as SortConfig['field'] })}
         className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
       >
         {sortOptions.map((option) => (
@@ -38,21 +36,11 @@ export const SortControl: React.FC<SortControlProps> = ({ value, onChange }) => 
       >
         {value.direction === 'asc' ? (
           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 15l7-7 7 7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
           </svg>
         ) : (
           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         )}
       </button>

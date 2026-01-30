@@ -27,9 +27,7 @@ export const TransactionRow: React.FC<TransactionRowProps> = ({
 
   return (
     <tr className="border-b hover:bg-gray-50">
-      <td className="px-4 py-3 text-sm text-gray-600">
-        {formatDate(transaction.transactionDate)}
-      </td>
+      <td className="px-4 py-3 text-sm text-gray-600">{formatDate(transaction.transactionDate)}</td>
       <td className="px-4 py-3">
         <span
           className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
@@ -41,9 +39,7 @@ export const TransactionRow: React.FC<TransactionRowProps> = ({
           {transaction.type}
         </span>
       </td>
-      <td className="px-4 py-3 text-sm text-gray-900">
-        {transaction.quantity.toFixed(2)} chỉ
-      </td>
+      <td className="px-4 py-3 text-sm text-gray-900">{transaction.quantity.toFixed(2)} chỉ</td>
       <td className="px-4 py-3 text-sm text-gray-900">
         {formatCurrency(transaction.pricePerUnit)} {transaction.currency}
       </td>
@@ -58,7 +54,10 @@ export const TransactionRow: React.FC<TransactionRowProps> = ({
         >
           View
         </button>
-        <button onClick={() => onDelete?.(transaction.id)} className="text-red-600 hover:text-red-800">
+        <button
+          onClick={() => onDelete?.(transaction.id)}
+          className="text-red-600 hover:text-red-800"
+        >
           Delete
         </button>
       </td>

@@ -42,9 +42,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onSuccess, onC
         if (err.response?.status === 409) {
           alert('This transaction already exists. Please check your transaction list.');
         } else {
-          alert(
-            err.response?.data?.message || 'Failed to create transaction. Please try again.'
-          );
+          alert(err.response?.data?.message || 'Failed to create transaction. Please try again.');
         }
       },
     });
@@ -91,9 +89,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onSuccess, onC
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           placeholder="10.5"
         />
-        {errors.quantity && (
-          <p className="mt-1 text-sm text-red-600">{errors.quantity.message}</p>
-        )}
+        {errors.quantity && <p className="mt-1 text-sm text-red-600">{errors.quantity.message}</p>}
       </div>
 
       {/* Price per Unit */}
@@ -140,9 +136,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onSuccess, onC
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           placeholder="SJC, PNJ, etc."
         />
-        {errors.provider && (
-          <p className="mt-1 text-sm text-red-600">{errors.provider.message}</p>
-        )}
+        {errors.provider && <p className="mt-1 text-sm text-red-600">{errors.provider.message}</p>}
       </div>
 
       {/* Transaction Date */}

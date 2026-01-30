@@ -14,8 +14,7 @@ interface FilterPanelProps {
 }
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({ sortConfig, onSortChange }) => {
-  const { filters, updateFilter, removeFilter, clearAllFilters, setMultipleFilters } =
-    useFilters();
+  const { filters, updateFilter, removeFilter, clearAllFilters, setMultipleFilters } = useFilters();
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -32,12 +31,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ sortConfig, onSortChan
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </button>
         <SortControl value={sortConfig} onChange={onSortChange} />
@@ -46,10 +40,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ sortConfig, onSortChan
       {isExpanded && (
         <div className="mt-4 space-y-4 border-t pt-4">
           <div className="grid gap-4 md:grid-cols-2">
-            <TypeFilter
-              value={filters.type}
-              onChange={(value) => updateFilter('type', value)}
-            />
+            <TypeFilter value={filters.type} onChange={(value) => updateFilter('type', value)} />
             <ProviderFilter
               value={filters.provider}
               onChange={(value) => updateFilter('provider', value)}
@@ -64,19 +55,13 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ sortConfig, onSortChan
           <DateRangeFilter
             startDate={filters.startDate}
             endDate={filters.endDate}
-            onChange={(start, end) =>
-              setMultipleFilters({ startDate: start, endDate: end })
-            }
+            onChange={(start, end) => setMultipleFilters({ startDate: start, endDate: end })}
           />
         </div>
       )}
 
       <div className="mt-4">
-        <FilterChips
-          filters={filters}
-          onRemoveFilter={removeFilter}
-          onClearAll={clearAllFilters}
-        />
+        <FilterChips filters={filters} onRemoveFilter={removeFilter} onClearAll={clearAllFilters} />
       </div>
     </div>
   );

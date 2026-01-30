@@ -32,7 +32,9 @@ export const TransactionList: React.FC<TransactionListProps> = ({
   if (!transactions.length) {
     return (
       <div className="py-12 text-center">
-        <p className="text-gray-500">No transactions found. Try adjusting your filters or create a new transaction!</p>
+        <p className="text-gray-500">
+          No transactions found. Try adjusting your filters or create a new transaction!
+        </p>
       </div>
     );
   }
@@ -107,10 +109,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
                 </span>{' '}
                 to{' '}
                 <span className="font-medium">
-                  {Math.min(
-                    pagination.currentPage * pagination.pageSize,
-                    pagination.totalItems
-                  )}
+                  {Math.min(pagination.currentPage * pagination.pageSize, pagination.totalItems)}
                 </span>{' '}
                 of <span className="font-medium">{pagination.totalItems}</span> results
               </p>

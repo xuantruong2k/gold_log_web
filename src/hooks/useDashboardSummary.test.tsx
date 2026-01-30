@@ -146,9 +146,7 @@ describe('useDashboardSummary', () => {
   });
 
   it('should return 0 average price when no BUY transactions', () => {
-    const transactions = [
-      mockTransaction({ type: TransactionType.SELL, quantity: 5 }),
-    ];
+    const transactions = [mockTransaction({ type: TransactionType.SELL, quantity: 5 })];
 
     vi.mocked(useTransactions).mockReturnValue({
       data: { data: transactions, pagination: {} as any },

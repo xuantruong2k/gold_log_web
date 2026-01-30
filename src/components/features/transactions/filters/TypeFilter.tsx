@@ -13,9 +13,7 @@ export const TypeFilter: React.FC<TypeFilterProps> = ({ value, onChange }) => {
         <button
           onClick={() => onChange(undefined)}
           className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-            !value
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            !value ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
           All
