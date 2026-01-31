@@ -9,9 +9,11 @@ export interface ApiUser {
 }
 
 export interface ApiLoginResponse {
-  token: string;
+  access_token: string;
+  access_token_expires_in: number;
+  refresh_token: string;
+  refresh_token_expires_in: number;
   token_type: string;
-  expires_in: number;
   user: ApiUser;
 }
 
@@ -21,7 +23,7 @@ export interface ApiTransaction {
   idempotency_key: string;
   type: 'BUY' | 'SELL';
   quantity: number;
-  unit: 'CHI' | 'LUONG' | 'OZ';
+  unit?: 'CHI' | 'LUONG' | 'OZ'; // Optional: defaults to CHI if not provided
   price_per_unit: number;
   currency: string;
   total_amount: number;
@@ -57,4 +59,25 @@ export interface ApiPaginationMetadata {
 export interface ApiPagedResponse<T> {
   data: T[];
   pagination: ApiPaginationMetadata;
+}
+
+/**
+ * API response for current price (snake_case from backend)
+ */
+export interface ApiCurrentPrice {
+  provider: string;
+  buy_price: number;
+  sell_price: number;
+  unit: string;
+  unit_display_name: string;
+  currency: string;
+  updated_at: string;
+}
+
+/**
+ * API response for all current prices
+ */
+export interface ApiAllPricesResponse {
+  timestamp: string;
+  providers: ApiCurrentPrice[];
 }

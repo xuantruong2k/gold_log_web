@@ -7,7 +7,7 @@ interface ProviderFilterProps {
 }
 
 export const ProviderFilter: React.FC<ProviderFilterProps> = ({ value, onChange }) => {
-  const { data } = useTransactions(undefined, { page: 1, pageSize: 1000 });
+  const { data } = useTransactions(undefined, { page: 1, pageSize: 100 });
 
   const providers = useMemo(() => {
     if (!data?.data) return [];

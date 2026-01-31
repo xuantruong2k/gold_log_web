@@ -3,11 +3,14 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './api/queryClient';
 import { ROUTES } from './config/routes';
 import { useTokenExpiration } from './hooks/useTokenExpiration';
+import { useProactiveTokenRefresh } from './hooks/useProactiveTokenRefresh';
+import { setupRefreshTokenInterceptor } from './api/refresh-interceptor';
 
 // Pages
 import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
 import TransactionsPage from './pages/TransactionsPage';
+import GoldPricesPage from './pages/GoldPricesPage';
 import ProfilePage from './pages/ProfilePage';
 import OAuthCallbackPage from './pages/OAuthCallbackPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -15,11 +18,15 @@ import NotFoundPage from './pages/NotFoundPage';
 // Components
 import { MainLayout } from './components/layout/MainLayout';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
+import { TokenRefreshIndicator } from './hooks/useTokenRefreshStatus';
 
 // App content component to use hooks inside Router context
 function AppContent() {
   // Monitor token expiration and auto-logout
   useTokenExpiration();
+
+  // Proactively refresh token before expiration
+  useProactiveTokenRefresh();
 
   return (
     <Routes>
@@ -49,6 +56,14 @@ function AppContent() {
         }
       />
       <Route
+        path={ROUTES.GOLD_PRICES}
+        element={
+          <MainLayout>
+            <GoldPricesPage />
+          </MainLayout>
+        }
+      />
+      <Route
         path={ROUTES.PROFILE}
         element={
           <ProtectedRoute>
@@ -66,10 +81,14 @@ function AppContent() {
 }
 
 function App() {
+  // Setup automatic token refresh on 401 errors (runs once on app load)
+  setupRefreshTokenInterceptor();
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AppContent />
+        <TokenRefreshIndicator />
       </BrowserRouter>
     </QueryClientProvider>
   );

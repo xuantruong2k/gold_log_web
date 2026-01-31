@@ -1,6 +1,12 @@
-import type { User, LoginResponse, Transaction } from '@/types';
-import type { ApiUser, ApiLoginResponse, ApiTransaction } from './types';
-import { UserRole, TransactionType, GoldUnit } from '@/types';
+import type { User, LoginResponse, Transaction, GoldPrice, AllPricesResponse } from '@/types';
+import type {
+  ApiUser,
+  ApiLoginResponse,
+  ApiTransaction,
+  ApiCurrentPrice,
+  ApiAllPricesResponse,
+} from './types';
+import { UserRole, TransactionType, GoldUnit, GoldProvider } from '@/types';
 
 export function apiUserToUser(apiUser: ApiUser): User {
   return {
@@ -15,9 +21,11 @@ export function apiUserToUser(apiUser: ApiUser): User {
 
 export function apiLoginResponseToLoginResponse(apiResponse: ApiLoginResponse): LoginResponse {
   return {
-    token: apiResponse.token,
+    accessToken: apiResponse.access_token,
+    accessTokenExpiresIn: apiResponse.access_token_expires_in,
+    refreshToken: apiResponse.refresh_token,
+    refreshTokenExpiresIn: apiResponse.refresh_token_expires_in,
     tokenType: apiResponse.token_type,
-    expiresIn: apiResponse.expires_in,
     user: apiUserToUser(apiResponse.user),
   };
 }
@@ -55,5 +63,37 @@ export function transactionToApiRequest(
     provider: request.provider,
     transaction_date: request.transactionDate,
     notes: request.notes,
+  };
+}
+
+/**
+ * Transform API price to domain price model
+ */
+export function apiPriceToGoldPrice(apiPrice: ApiCurrentPrice): GoldPrice {
+  const spread = apiPrice.sell_price - apiPrice.buy_price;
+  const spreadPercentage = (spread / apiPrice.buy_price) * 100;
+
+  return {
+    provider: apiPrice.provider as GoldProvider,
+    buyPrice: apiPrice.buy_price,
+    sellPrice: apiPrice.sell_price,
+    unit: apiPrice.unit,
+    unitDisplayName: apiPrice.unit_display_name,
+    currency: apiPrice.currency,
+    updatedAt: apiPrice.updated_at,
+    spread,
+    spreadPercentage,
+  };
+}
+
+/**
+ * Transform API all prices response to domain model
+ */
+export function apiAllPricesToAllPricesResponse(
+  apiResponse: ApiAllPricesResponse
+): AllPricesResponse {
+  return {
+    timestamp: apiResponse.timestamp,
+    prices: apiResponse.providers.map(apiPriceToGoldPrice),
   };
 }

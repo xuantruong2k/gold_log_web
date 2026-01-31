@@ -86,16 +86,16 @@ VITE_API_BASE_URL=http://localhost:8080/api/v1
 
 ## Implementation Phases
 
-| Phase | Component | Estimated Time | Priority |
-|-------|-----------|----------------|----------|
-| 1 | Transaction API Layer | 30 min | P0 |
-| 2 | Transaction Hooks | 45 min | P0 |
-| 3 | Create Transaction Form | 1 hour | P0 |
-| 4 | Transaction List Display | 1 hour | P0 |
-| 5 | Transaction Details Modal | 30 min | P0 |
-| 6 | Delete Transaction | 30 min | P0 |
-| 7 | Dashboard Integration | 45 min | P0 |
-| **Total** | | **~5 hours** | |
+| Phase     | Component                 | Estimated Time | Priority |
+| --------- | ------------------------- | -------------- | -------- |
+| 1         | Transaction API Layer     | 30 min         | P0       |
+| 2         | Transaction Hooks         | 45 min         | P0       |
+| 3         | Create Transaction Form   | 1 hour         | P0       |
+| 4         | Transaction List Display  | 1 hour         | P0       |
+| 5         | Transaction Details Modal | 30 min         | P0       |
+| 6         | Delete Transaction        | 30 min         | P0       |
+| 7         | Dashboard Integration     | 45 min         | P0       |
+| **Total** |                           | **~5 hours**   |          |
 
 ---
 
@@ -454,10 +454,7 @@ interface UsePaginationProps {
   initialPageSize?: number;
 }
 
-export function usePagination({
-  initialPage = 1,
-  initialPageSize = 20,
-}: UsePaginationProps = {}) {
+export function usePagination({ initialPage = 1, initialPageSize = 20 }: UsePaginationProps = {}) {
   const [page, setPage] = useState(initialPage);
   const [pageSize, setPageSize] = useState(initialPageSize);
 
@@ -1447,7 +1444,7 @@ import { TransactionType } from '@/types/transaction.types';
 
 export function useDashboardSummary() {
   // Fetch all transactions (we'll need to implement "fetch all" logic later)
-  const { data, isLoading, error } = useTransactions(undefined, { page: 1, pageSize: 1000 });
+  const { data, isLoading, error } = useTransactions(undefined, { page: 1, pageSize: 100 });
 
   const summary = useMemo(() => {
     if (!data?.data) {
@@ -1618,6 +1615,7 @@ Expected: Successful production build.
 ### Step 4: Manual Testing
 
 1. **Start servers**:
+
    ```bash
    # Terminal 1: Backend
    cd ../gold_log_backend && npm run dev
@@ -1706,7 +1704,7 @@ const totalAmount = quantity && pricePerUnit ? quantity * pricePerUnit : 0;
 ```typescript
 onSuccess: () => {
   queryClient.invalidateQueries({ queryKey: ['transactions'] });
-}
+};
 ```
 
 ---
@@ -1743,6 +1741,7 @@ This plan implements complete transaction CRUD operations:
 ✅ **Dashboard**: Summary cards with portfolio metrics
 
 All features include:
+
 - Full TypeScript coverage
 - React Query for state management
 - Error handling and loading states

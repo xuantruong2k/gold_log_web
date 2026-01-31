@@ -110,17 +110,17 @@ npm install date-fns
 
 ## Implementation Phases
 
-| Phase | Component | Estimated Time | Priority |
-|-------|-----------|----------------|----------|
-| 1 | Chart Infrastructure | 30 min | P0 |
-| 2 | Price Timeline Chart | 1 hour | P0 |
-| 3 | Buy/Sell Ratio Chart | 45 min | P0 |
-| 4 | Monthly Volume Chart | 45 min | P0 |
-| 5 | Holdings Over Time | 1 hour | P1 |
-| 6 | Average Price Trend | 45 min | P1 |
-| 7 | Provider Comparison | 1 hour | P1 |
-| 8 | Dashboard Integration | 1 hour | P0 |
-| **Total** | | **~7 hours** | |
+| Phase     | Component             | Estimated Time | Priority |
+| --------- | --------------------- | -------------- | -------- |
+| 1         | Chart Infrastructure  | 30 min         | P0       |
+| 2         | Price Timeline Chart  | 1 hour         | P0       |
+| 3         | Buy/Sell Ratio Chart  | 45 min         | P0       |
+| 4         | Monthly Volume Chart  | 45 min         | P0       |
+| 5         | Holdings Over Time    | 1 hour         | P1       |
+| 6         | Average Price Trend   | 45 min         | P1       |
+| 7         | Provider Comparison   | 1 hour         | P1       |
+| 8         | Dashboard Integration | 1 hour         | P0       |
+| **Total** |                       | **~7 hours**   |          |
 
 ---
 
@@ -273,9 +273,7 @@ export function groupTransactionsByMonth(transactions: Transaction[]): {
 /**
  * Calculate cumulative quantity over time
  */
-export function calculateCumulativeHoldings(
-  transactions: Transaction[]
-): TimeSeriesDataPoint[] {
+export function calculateCumulativeHoldings(transactions: Transaction[]): TimeSeriesDataPoint[] {
   const sorted = [...transactions].sort(
     (a, b) => new Date(a.transactionDate).getTime() - new Date(b.transactionDate).getTime()
   );
@@ -372,7 +370,7 @@ import type { ChartDateRange } from '@/types/chart.types';
 
 export const PriceTimelineChart: React.FC = () => {
   const [dateRange, setDateRange] = useState<ChartDateRange>('3m');
-  const { data } = useTransactions(undefined, { page: 1, pageSize: 1000 });
+  const { data } = useTransactions(undefined, { page: 1, pageSize: 100 });
 
   const chartData = useMemo(() => {
     if (!data?.data) return [];
@@ -508,7 +506,7 @@ import { TransactionType } from '@/types/transaction.types';
 import { formatChartCurrency } from '@/utils/chartUtils';
 
 export const BuySellRatioChart: React.FC = () => {
-  const { data } = useTransactions(undefined, { page: 1, pageSize: 1000 });
+  const { data } = useTransactions(undefined, { page: 1, pageSize: 100 });
 
   const chartData = useMemo(() => {
     if (!data?.data) return [];
@@ -626,7 +624,7 @@ import { groupTransactionsByMonth, formatChartCurrency } from '@/utils/chartUtil
 import { TransactionType } from '@/types/transaction.types';
 
 export const MonthlyVolumeChart: React.FC = () => {
-  const { data } = useTransactions(undefined, { page: 1, pageSize: 1000 });
+  const { data } = useTransactions(undefined, { page: 1, pageSize: 100 });
 
   const chartData = useMemo(() => {
     if (!data?.data) return [];
@@ -713,7 +711,7 @@ import { ChartContainer } from '@/components/common/ChartContainer';
 import { calculateCumulativeHoldings, formatChartDate } from '@/utils/chartUtils';
 
 export const HoldingsOverTimeChart: React.FC = () => {
-  const { data } = useTransactions(undefined, { page: 1, pageSize: 1000 });
+  const { data } = useTransactions(undefined, { page: 1, pageSize: 100 });
 
   const chartData = useMemo(() => {
     if (!data?.data) return [];
@@ -789,7 +787,7 @@ import { format } from 'date-fns';
 import { TransactionType } from '@/types/transaction.types';
 
 export const AveragePriceTrendChart: React.FC = () => {
-  const { data } = useTransactions(undefined, { page: 1, pageSize: 1000 });
+  const { data } = useTransactions(undefined, { page: 1, pageSize: 100 });
 
   const chartData = useMemo(() => {
     if (!data?.data) return [];
@@ -880,7 +878,7 @@ import { formatChartCurrency } from '@/utils/chartUtils';
 import { TransactionType } from '@/types/transaction.types';
 
 export const ProviderComparisonChart: React.FC = () => {
-  const { data } = useTransactions(undefined, { page: 1, pageSize: 1000 });
+  const { data } = useTransactions(undefined, { page: 1, pageSize: 100 });
 
   const chartData = useMemo(() => {
     if (!data?.data) return [];
@@ -1235,6 +1233,7 @@ This plan implements comprehensive data visualization:
 ✅ **Dashboard Integration**: Mini charts and full analytics page
 
 **Chart Features**:
+
 - Responsive design
 - Interactive tooltips
 - Date range filtering
