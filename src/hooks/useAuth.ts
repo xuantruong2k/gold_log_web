@@ -60,20 +60,34 @@ export function useAuth(): UseAuthReturn {
         }
 
         // Exchange code for token
+        console.log('🔄 Exchanging OAuth code for tokens...');
         const response = await authApi.handleOAuthCallback(provider, {
           code,
           state,
         });
+        console.log('✅ OAuth callback successful');
 
         // Save auth state
-        setAuth(response.token, response.user);
+        setAuth(response.accessToken, response.user);
 
         // Calculate token expiration time
-        const expiresAt = Date.now() + response.expiresIn * 1000;
+        const expiresAt = Date.now() + response.accessTokenExpiresIn * 1000;
         localStorage.setItem('token_expires_at', expiresAt.toString());
+
+        // Save refresh token (always provided by backend)
+        localStorage.setItem('refresh_token', response.refreshToken);
+
+        // Save refresh token expiration
+        const refreshExpiresAt = Date.now() + response.refreshTokenExpiresIn * 1000;
+        localStorage.setItem('refresh_token_expires_at', refreshExpiresAt.toString());
 
         // Clean up
         sessionStorage.removeItem('oauth_state');
+
+        console.log('✅ Auth state saved, redirecting to dashboard...');
+
+        // Small delay to ensure all state is persisted
+        await new Promise(resolve => setTimeout(resolve, 100));
 
         // Navigate to dashboard
         navigate(ROUTES.DASHBOARD);
@@ -101,12 +115,16 @@ export function useAuth(): UseAuthReturn {
       setIsLoading(true);
       setError(null);
 
-      // Call backend logout endpoint
-      await authApi.logout();
+      const refreshToken = localStorage.getItem('refresh_token');
+
+      // Call backend logout endpoint with refresh token
+      await authApi.logout(refreshToken || undefined);
 
       // Clear local state
       clearAuth();
       localStorage.removeItem('token_expires_at');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('refresh_token_expires_at');
       sessionStorage.removeItem('oauth_state');
 
       // Navigate to home
@@ -117,6 +135,8 @@ export function useAuth(): UseAuthReturn {
       // Clear state even if backend call fails
       clearAuth();
       localStorage.removeItem('token_expires_at');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('refresh_token_expires_at');
       navigate(ROUTES.HOME);
     } finally {
       setIsLoading(false);

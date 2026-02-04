@@ -65,9 +65,21 @@ export const authApi = {
   },
 
   /**
-   * Logout and invalidate current JWT token
+   * Logout and invalidate tokens
+   * @param refreshToken - Optional refresh token to revoke
+   * @param allDevices - If true, revoke all refresh tokens for user (logout from all devices)
    */
-  async logout(): Promise<void> {
-    await apiClient.post('/auth/logout');
+  async logout(refreshToken?: string, allDevices?: boolean): Promise<void> {
+    const body: { refresh_token?: string; all_devices?: boolean } = {};
+
+    if (refreshToken) {
+      body.refresh_token = refreshToken;
+    }
+
+    if (allDevices !== undefined) {
+      body.all_devices = allDevices;
+    }
+
+    await apiClient.post('/auth/logout', body);
   },
 };

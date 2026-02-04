@@ -40,7 +40,7 @@ export const TransactionRow: React.FC<TransactionRowProps> = ({
         </span>
       </td>
       <td className="px-4 py-3 text-sm text-gray-900">
-        {transaction.quantity.toFixed(2)} {transaction.unit.toLowerCase()}
+        {transaction.quantity.toFixed(2)} {transaction.unit ? transaction.unit.toLowerCase() : 'chỉ'}
       </td>
       <td className="px-4 py-3 text-sm text-gray-900">
         {formatCurrency(transaction.pricePerUnit)} {transaction.currency}

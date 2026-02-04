@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { ROUTES } from '@/config/routes';
@@ -8,8 +8,14 @@ export const OAuthCallbackPage = () => {
   const { provider } = useParams<{ provider: string }>();
   const navigate = useNavigate();
   const { handleOAuthCallback, isLoading, error } = useAuth();
+  const hasProcessedRef = useRef(false);
 
   useEffect(() => {
+    // Prevent duplicate processing
+    if (hasProcessedRef.current) {
+      return;
+    }
+
     const code = searchParams.get('code');
     const state = searchParams.get('state');
     const errorParam = searchParams.get('error');
@@ -17,15 +23,19 @@ export const OAuthCallbackPage = () => {
     // Handle OAuth error from provider
     if (errorParam) {
       console.error('OAuth provider error:', errorParam);
+      hasProcessedRef.current = true;
       setTimeout(() => navigate(ROUTES.HOME), 2000);
       return;
     }
 
     // Handle successful OAuth callback
     if (code && state && provider) {
+      console.log('🔐 Starting OAuth callback processing...');
+      hasProcessedRef.current = true;
       handleOAuthCallback(code, state, provider);
     } else {
       console.error('Missing OAuth parameters');
+      hasProcessedRef.current = true;
       setTimeout(() => navigate(ROUTES.HOME), 2000);
     }
   }, [searchParams, provider, handleOAuthCallback, navigate]);

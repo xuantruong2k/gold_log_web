@@ -15,7 +15,7 @@ export interface Transaction {
   idempotencyKey: string;
   type: TransactionType;
   quantity: number;
-  unit: GoldUnit;
+  unit?: GoldUnit; // Optional: backend may not provide, defaults to CHI
   pricePerUnit: number;
   currency: string;
   totalAmount: number;

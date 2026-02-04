@@ -18,9 +18,11 @@ export function useTokenExpiration() {
       const expiresAt = localStorage.getItem('token_expires_at');
 
       if (!expiresAt) {
-        // No expiration time stored, logout for safety
-        console.warn('No token expiration time found');
+        // No expiration time stored - this might be an old session
+        // For safety, we'll logout, but you could also just skip the check
+        console.warn('No token expiration time found, logging out for safety');
         clearAuth();
+        localStorage.removeItem('token_expires_at');
         navigate(ROUTES.HOME);
         return;
       }
@@ -34,10 +36,14 @@ export function useTokenExpiration() {
         clearAuth();
         localStorage.removeItem('token_expires_at');
         navigate(ROUTES.HOME);
+      } else {
+        // Token is still valid
+        const remainingTime = Math.floor((expirationTime - now) / 1000 / 60);
+        console.log(`Token valid for ${remainingTime} more minutes`);
       }
     };
 
-    // Check immediately
+    // Check immediately on mount
     checkTokenExpiration();
 
     // Check every minute

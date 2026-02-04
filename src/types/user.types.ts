@@ -13,8 +13,10 @@ export interface User {
 }
 
 export interface LoginResponse {
-  token: string;
+  accessToken: string;
+  accessTokenExpiresIn: number;
+  refreshToken: string;
+  refreshTokenExpiresIn: number;
   tokenType: string;
-  expiresIn: number;
   user: User;
 }

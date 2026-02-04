@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { transactionSchema, type TransactionFormData } from '@/schemas/transaction.schema';
@@ -11,15 +12,18 @@ interface TransactionFormProps {
 
 export const TransactionForm: React.FC<TransactionFormProps> = ({ onSuccess, onCancel }) => {
   const { mutate: createTransaction, isPending: isLoading } = useCreateTransaction();
+  const [priceDisplay, setPriceDisplay] = useState('');
 
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
     reset,
   } = useForm<TransactionFormData>({
     resolver: zodResolver(transactionSchema),
+    shouldFocusError: false, // Prevent auto-focus on validation errors
     defaultValues: {
       type: TransactionType.BUY,
       unit: GoldUnit.CHI,
@@ -32,10 +36,36 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onSuccess, onC
   const pricePerUnit = watch('pricePerUnit');
   const totalAmount = quantity && pricePerUnit ? quantity * pricePerUnit : 0;
 
+  // Format number with thousand separator (dots for Vietnamese)
+  const formatPrice = (value: string): string => {
+    // Remove all non-digit characters
+    const numbers = value.replace(/\D/g, '');
+    if (!numbers) return '';
+    // Add thousand separators with dots
+    return numbers.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
+  // Handle price input change
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    const formatted = formatPrice(inputValue);
+    setPriceDisplay(formatted);
+    // Set actual numeric value for form
+    const numericValue = parseFloat(inputValue.replace(/\D/g, ''));
+    setValue('pricePerUnit', numericValue || 0, { shouldValidate: true, shouldTouch: true });
+  };
+
   const onSubmit = (data: TransactionFormData) => {
+    // Prevent any focus changes during submission
+    const activeElement = document.activeElement as HTMLElement;
+    if (activeElement) {
+      activeElement.blur();
+    }
+
     createTransaction(data, {
       onSuccess: () => {
         reset();
+        setPriceDisplay('');
         onSuccess?.();
       },
       onError: (error: unknown) => {
@@ -50,7 +80,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onSuccess, onC
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
       {/* Transaction Type */}
       <div>
         <label className="block text-sm font-medium text-gray-700">Transaction Type *</label>
@@ -117,10 +147,17 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onSuccess, onC
         </label>
         <input
           id="pricePerUnit"
-          type="number"
-          {...register('pricePerUnit', { valueAsNumber: true })}
+          type="text"
+          inputMode="numeric"
+          value={priceDisplay}
+          onChange={handlePriceChange}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          placeholder="75000000"
+          placeholder="75.000.000"
+        />
+        {/* Hidden input to register with react-hook-form */}
+        <input
+          type="hidden"
+          {...register('pricePerUnit', { valueAsNumber: true })}
         />
         {errors.pricePerUnit && (
           <p className="mt-1 text-sm text-red-600">{errors.pricePerUnit.message}</p>
@@ -166,6 +203,12 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onSuccess, onC
           id="transactionDate"
           type="datetime-local"
           {...register('transactionDate')}
+          onKeyDown={(e) => {
+            // Prevent Enter key from interfering with form submission
+            if (e.key === 'Enter') {
+              e.preventDefault();
+            }
+          }}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
         />
       </div>

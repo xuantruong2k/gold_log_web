@@ -60,7 +60,7 @@ export const TransactionDetails: React.FC<TransactionDetailsProps> = ({
         <div>
           <label className="block text-sm font-medium text-gray-500">Quantity</label>
           <p className="mt-1 text-sm text-gray-900">
-            {transaction.quantity.toFixed(2)} {transaction.unit.toLowerCase()}
+            {transaction.quantity.toFixed(2)} {transaction.unit ? transaction.unit.toLowerCase() : 'chỉ'}
           </p>
         </div>
         <div>
