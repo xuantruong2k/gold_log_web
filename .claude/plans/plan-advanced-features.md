@@ -72,17 +72,17 @@ GET /api/v1/transactions?type=BUY&startDate=2026-01-01
 
 ## Implementation Phases
 
-| Phase | Component | Estimated Time | Priority |
-|-------|-----------|----------------|----------|
-| 1 | Filter System Architecture | 30 min | P0 |
-| 2 | Type Filter | 30 min | P0 |
-| 3 | Date Range Filter | 1 hour | P0 |
-| 4 | Provider Filter | 30 min | P0 |
-| 5 | Search Functionality | 45 min | P1 |
-| 6 | Sort Functionality | 45 min | P1 |
-| 7 | Filter Persistence (URL) | 30 min | P1 |
-| 8 | Export Functionality | 1 hour | P2 |
-| **Total** | | **~5.5 hours** | |
+| Phase     | Component                  | Estimated Time | Priority |
+| --------- | -------------------------- | -------------- | -------- |
+| 1         | Filter System Architecture | 30 min         | P0       |
+| 2         | Type Filter                | 30 min         | P0       |
+| 3         | Date Range Filter          | 1 hour         | P0       |
+| 4         | Provider Filter            | 30 min         | P0       |
+| 5         | Search Functionality       | 45 min         | P1       |
+| 6         | Sort Functionality         | 45 min         | P1       |
+| 7         | Filter Persistence (URL)   | 30 min         | P1       |
+| 8         | Export Functionality       | 1 hour         | P2       |
+| **Total** |                            | **~5.5 hours** |          |
 
 ---
 
@@ -187,7 +187,13 @@ export function getDateRangeFromPreset(preset: DatePreset): {
  * Check if filters are active
  */
 export function hasActiveFilters(filters: TransactionFilters): boolean {
-  return !!(filters.type || filters.startDate || filters.endDate || filters.provider || filters.search);
+  return !!(
+    filters.type ||
+    filters.startDate ||
+    filters.endDate ||
+    filters.provider ||
+    filters.search
+  );
 }
 
 /**

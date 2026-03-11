@@ -1,5 +1,21 @@
-import type { User, LoginResponse, Transaction } from '@/types';
-import type { ApiUser, ApiLoginResponse, ApiTransaction } from './types';
+import type {
+  User,
+  LoginResponse,
+  Transaction,
+  ExchangeRate,
+  GoldProviderPrice,
+  CurrentGoldPrices,
+  WorldGoldPrice,
+} from '@/types';
+import type {
+  ApiUser,
+  ApiLoginResponse,
+  ApiTransaction,
+  ApiExchangeRate,
+  ApiGoldProviderPrice,
+  ApiCurrentGoldPrices,
+  ApiWorldGoldPrice,
+} from './types';
 import { UserRole, TransactionType } from '@/types';
 
 export function apiUserToUser(apiUser: ApiUser): User {
@@ -38,6 +54,53 @@ export function apiTransactionToTransaction(apiTransaction: ApiTransaction): Tra
     isDeleted: apiTransaction.is_deleted,
     createdAt: apiTransaction.created_at,
     updatedAt: apiTransaction.updated_at,
+  };
+}
+
+export function apiExchangeRateToExchangeRate(api: ApiExchangeRate): ExchangeRate {
+  return {
+    provider: api.provider,
+    fromCurrency: api.from_currency,
+    toCurrency: api.to_currency,
+    buyRate: api.buy_rate,
+    transferRate: api.transfer_rate,
+    sellRate: api.sell_rate,
+    updatedAt: api.updated_at,
+  };
+}
+
+export function apiGoldProviderPriceToGoldProviderPrice(
+  api: ApiGoldProviderPrice
+): GoldProviderPrice {
+  return {
+    provider: api.provider,
+    buyPrice: api.buy_price,
+    sellPrice: api.sell_price,
+    unit: api.unit,
+    unitDisplayName: api.unit_display_name,
+    currency: api.currency,
+    updatedAt: api.updated_at,
+  };
+}
+
+export function apiCurrentGoldPricesToCurrentGoldPrices(
+  api: ApiCurrentGoldPrices
+): CurrentGoldPrices {
+  return {
+    timestamp: api.timestamp,
+    providers: api.providers.map(apiGoldProviderPriceToGoldProviderPrice),
+  };
+}
+
+export function apiWorldGoldPriceToWorldGoldPrice(api: ApiWorldGoldPrice): WorldGoldPrice {
+  return {
+    provider: api.provider,
+    buyPrice: api.buy_price,
+    sellPrice: api.sell_price,
+    unit: api.unit,
+    unitDisplayName: api.unit_display_name,
+    currency: api.currency,
+    updatedAt: api.updated_at,
   };
 }
 

@@ -56,3 +56,38 @@ export interface ApiPagedResponse<T> {
   data: T[];
   pagination: ApiPaginationMetadata;
 }
+
+export interface ApiExchangeRate {
+  provider: string;
+  from_currency: string;
+  to_currency: string;
+  buy_rate: number;
+  transfer_rate: number;
+  sell_rate: number;
+  updated_at: string;
+}
+
+export interface ApiGoldProviderPrice {
+  provider: string;
+  buy_price: number;
+  sell_price: number;
+  unit: string;
+  unit_display_name: string;
+  currency: string;
+  updated_at: string;
+}
+
+export interface ApiCurrentGoldPrices {
+  timestamp: string;
+  providers: ApiGoldProviderPrice[];
+}
+
+export interface ApiWorldGoldPrice {
+  provider: string;
+  buy_price: number;
+  sell_price: number;
+  unit: string;
+  unit_display_name: string;
+  currency: string;
+  updated_at: string;
+}

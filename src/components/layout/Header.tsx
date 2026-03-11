@@ -26,6 +26,9 @@ export const Header = () => {
           <Link to={ROUTES.TRANSACTIONS} className="text-gray-600 hover:text-gray-900">
             Transactions
           </Link>
+          <Link to={ROUTES.GOLD_PRICES} className="text-gray-600 hover:text-gray-900">
+            Gold Prices
+          </Link>
           <Link to={ROUTES.PROFILE} className="text-gray-600 hover:text-gray-900">
             Profile
           </Link>

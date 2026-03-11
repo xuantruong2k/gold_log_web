@@ -8,6 +8,7 @@ import { useTokenExpiration } from './hooks/useTokenExpiration';
 import LandingPage from './pages/LandingPage';
 import DashboardPage from './pages/DashboardPage';
 import TransactionsPage from './pages/TransactionsPage';
+import GoldPricesPage from './pages/GoldPricesPage';
 import ProfilePage from './pages/ProfilePage';
 import OAuthCallbackPage from './pages/OAuthCallbackPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -44,6 +45,16 @@ function AppContent() {
           <ProtectedRoute>
             <MainLayout>
               <TransactionsPage />
+            </MainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.GOLD_PRICES}
+        element={
+          <ProtectedRoute>
+            <MainLayout>
+              <GoldPricesPage />
             </MainLayout>
           </ProtectedRoute>
         }

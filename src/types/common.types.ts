@@ -22,3 +22,13 @@ export interface ErrorResponse {
   message: string;
   timestamp: string;
 }
+
+export interface ExchangeRate {
+  provider: string;
+  fromCurrency: string;
+  toCurrency: string;
+  buyRate: number;
+  transferRate: number;
+  sellRate: number;
+  updatedAt: string;
+}

@@ -127,13 +127,10 @@ export const authApi = {
     provider: string,
     request: OAuthCallbackRequest
   ): Promise<LoginResponse> {
-    const response = await apiClient.post<ApiLoginResponse>(
-      `/auth/oauth/${provider}/callback`,
-      {
-        code: request.code,
-        state: request.state,
-      }
-    );
+    const response = await apiClient.post<ApiLoginResponse>(`/auth/oauth/${provider}/callback`, {
+      code: request.code,
+      state: request.state,
+    });
 
     return apiLoginResponseToLoginResponse(response.data);
   },
@@ -157,6 +154,7 @@ export const authApi = {
 ```
 
 **Verify**:
+
 ```typescript
 // Test in browser console after import
 // authApi.getAuthorizationUrl('google', 'http://localhost:3000/auth/callback/google')
@@ -254,31 +252,25 @@ export function useAuth(): UseAuthReturn {
   /**
    * Start OAuth flow by redirecting to provider
    */
-  const startOAuthFlow = useCallback(
-    async (provider: string, redirectUri: string) => {
-      try {
-        setIsLoading(true);
-        setError(null);
+  const startOAuthFlow = useCallback(async (provider: string, redirectUri: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
 
-        // Get authorization URL from backend
-        const { authorizationUrl, state } = await authApi.getAuthorizationUrl(
-          provider,
-          redirectUri
-        );
+      // Get authorization URL from backend
+      const { authorizationUrl, state } = await authApi.getAuthorizationUrl(provider, redirectUri);
 
-        // Store state for verification (CSRF protection)
-        sessionStorage.setItem('oauth_state', state);
+      // Store state for verification (CSRF protection)
+      sessionStorage.setItem('oauth_state', state);
 
-        // Redirect to OAuth provider
-        window.location.href = authorizationUrl;
-      } catch (err: any) {
-        const errorMessage = err.response?.data?.message || 'Failed to start authentication';
-        setError(errorMessage);
-        setIsLoading(false);
-      }
-    },
-    []
-  );
+      // Redirect to OAuth provider
+      window.location.href = authorizationUrl;
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || 'Failed to start authentication';
+      setError(errorMessage);
+      setIsLoading(false);
+    }
+  }, []);
 
   /**
    * Handle OAuth callback after user returns from provider
@@ -989,9 +981,7 @@ describe('useAuth', () => {
     });
 
     it('should handle errors during OAuth flow start', async () => {
-      vi.mocked(authApi.getAuthorizationUrl).mockRejectedValue(
-        new Error('Network error')
-      );
+      vi.mocked(authApi.getAuthorizationUrl).mockRejectedValue(new Error('Network error'));
 
       const { result } = renderHook(() => useAuth());
 
@@ -1121,15 +1111,20 @@ describe('Authentication Flow Integration', () => {
     <meta name="referrer" content="strict-origin-when-cross-origin" />
 
     <!-- Content Security Policy -->
-    <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self';
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self';
                    script-src 'self' 'unsafe-inline';
                    style-src 'self' 'unsafe-inline';
                    img-src 'self' data: https:;
-                   connect-src 'self' http://localhost:8080 https://accounts.google.com;" />
+                   connect-src 'self' http://localhost:8080 https://accounts.google.com;"
+    />
 
     <title>Gold Log - Track Your Gold Investment</title>
-    <meta name="description" content="Track your gold investment transactions and monitor portfolio performance in real-time." />
+    <meta
+      name="description"
+      content="Track your gold investment transactions and monitor portfolio performance in real-time."
+    />
   </head>
   <body>
     <div id="root"></div>
@@ -1201,14 +1196,17 @@ Add OAuth testing section:
 ### Troubleshooting
 
 **"Invalid redirect URI" error:**
+
 - Verify redirect URI in Google Cloud Console matches exactly
 - Check backend OAuth configuration
 
 **"Invalid state token" error:**
+
 - Clear browser storage and try again
 - Check that sessionStorage is enabled
 
 **401 errors after login:**
+
 - Verify JWT token in browser DevTools > Application > Local Storage
 - Check token expiration time
 - Verify backend is accepting the token
@@ -1220,12 +1218,13 @@ Add OAuth testing section:
 
 **File**: `OAUTH_TESTING.md`
 
-```markdown
+````markdown
 # OAuth Testing Checklist
 
 ## Manual Testing
 
 ### Happy Path
+
 - [ ] Click "Sign in with Google" redirects to Google
 - [ ] Complete Google authentication successfully
 - [ ] Redirect back to application with code and state
@@ -1237,6 +1236,7 @@ Add OAuth testing section:
 - [ ] Logout clears session and redirects to home
 
 ### Error Cases
+
 - [ ] Cancel OAuth flow - redirects back with error
 - [ ] Invalid state token - shows error message
 - [ ] Expired authorization code - shows error
@@ -1244,6 +1244,7 @@ Add OAuth testing section:
 - [ ] Backend unavailable - shows appropriate error
 
 ### Token Management
+
 - [ ] Token stored securely (not in localStorage)
 - [ ] Token included in API requests
 - [ ] Token expiration detected
@@ -1251,6 +1252,7 @@ Add OAuth testing section:
 - [ ] CSRF state token validated correctly
 
 ### Security
+
 - [ ] State parameter prevents CSRF
 - [ ] No sensitive data in URL after redirect
 - [ ] Session cleared on logout
@@ -1259,16 +1261,20 @@ Add OAuth testing section:
 ## Automated Testing
 
 Run test suite:
+
 ```bash
 npm run test
 npm run test:coverage
 ```
+````
 
 Expected coverage:
+
 - [ ] Auth API module: >90%
 - [ ] useAuth hook: >85%
 - [ ] OAuth pages: >80%
-```
+
+````
 
 ---
 
@@ -1302,7 +1308,7 @@ npm run dev
 # 7. Error Handling Test
 # Test network errors, invalid states, etc.
 # Verify appropriate error messages shown
-```
+````
 
 ---
 
@@ -1333,6 +1339,7 @@ VITE_ENVIRONMENT=production
 ## Production Deployment Checklist
 
 ### Pre-deployment
+
 - [ ] Update `.env.production` with production URLs
 - [ ] Add production redirect URI to Google OAuth whitelist
 - [ ] Verify backend production API is accessible
@@ -1341,6 +1348,7 @@ VITE_ENVIRONMENT=production
 - [ ] Test production build locally: `npm run preview`
 
 ### Deployment
+
 - [ ] Deploy built assets to hosting (Vercel, Netlify, etc.)
 - [ ] Verify production URL is accessible
 - [ ] Test OAuth flow in production
@@ -1348,6 +1356,7 @@ VITE_ENVIRONMENT=production
 - [ ] Check browser console for errors
 
 ### Post-deployment
+
 - [ ] Test complete user flow (login → use app → logout)
 - [ ] Monitor error logs
 - [ ] Verify analytics/monitoring (if configured)
@@ -1395,18 +1404,23 @@ After completing OAuth authentication:
 ### Common Issues
 
 **Issue**: "Invalid redirect URI" error
+
 - **Solution**: Verify redirect URI matches exactly in Google Console and code
 
 **Issue**: "Invalid state token" error
+
 - **Solution**: Check sessionStorage is working, clear browser cache
 
 **Issue**: Infinite redirect loop
+
 - **Solution**: Check token expiration logic, verify backend returns valid tokens
 
 **Issue**: 401 errors after login
+
 - **Solution**: Verify token format, check backend JWT validation
 
 **Issue**: Token not persisting across page reloads
+
 - **Solution**: Check Zustand persist configuration, verify localStorage
 
 ---
